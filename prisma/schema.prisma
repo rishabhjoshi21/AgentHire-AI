@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum AnalysisStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum AgentExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum AgentType {
+  RESUME_PARSER
+  JD_ANALYZER
+  RESUME_ANALYZER
+}
+
+model User {
+  id              String           @id @default(uuid()) @db.Uuid
+  fullName        String           @db.VarChar(100)
+  email           String           @unique @db.VarChar(255)
+  passwordHash    String           @db.VarChar(255)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  conversations   Conversation[]
+  jobDescriptions JobDescription[]
+  resumes         Resume[]
+  sessions        UserSession? 
+}
+
+model UserSession {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash String?   @db.VarChar(255)
+  expiresAt        DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Resume {
+  id               String     @id @default(uuid()) @db.Uuid
+  userId           String     @db.Uuid
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title            String     @db.VarChar(150)
+  rawContent       String?
+  optimizedContent String?
+  originalFileName String?    @db.VarChar(255)
+  mimeType         String?    @db.VarChar(100)
+  storagePath      String?
+  fileSize         Int?
+  fileHash String? @db.VarChar(64)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  deletedAt        DateTime?
+  analyses         Analysis[]
+
+  @@index([userId])
+  @@index([deletedAt])
+}
+
+model JobDescription {
+  id         String     @id @default(uuid()) @db.Uuid
+  userId     String     @db.Uuid
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String?    @db.VarChar(200)
+  company    String?    @db.VarChar(150)
+  jobUrl     String?
+  rawContent String?
+  contentHash String? @db.VarChar(64)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  deletedAt  DateTime?
+  analyses   Analysis[]
+
+  @@index([userId])
+  @@index([company])
+  @@index([deletedAt])
+}
+
+model Analysis {
+  id               String           @id @default(uuid()) @db.Uuid
+  resumeId         String           @db.Uuid
+  resume           Resume           @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescriptionId String           @db.Uuid
+  jobDescription   JobDescription   @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+  matchScore       Int?
+  atsScore         Int?
+  analysisResult   Json?
+  status           AnalysisStatus   @default(PENDING)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  executions       AgentExecution[]
+
+  @@index([resumeId])
+  @@index([jobDescriptionId])
+  @@index([status])
+}
+
+model Conversation {
+  id         String           @id @default(uuid()) @db.Uuid
+  userId     String           @db.Uuid
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String?          @db.VarChar(255)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  executions AgentExecution[]
+  messages   Message[]
+
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(uuid()) @db.Uuid
+  conversationId String       @db.Uuid
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageRole
+  content        String
+  metadata       Json?
+  tokenCount     Int?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+  @@index([createdAt])
+}
+
+model AgentExecution {
+  id               String               @id @default(uuid()) @db.Uuid
+  analysisId       String?              @db.Uuid
+  analysis         Analysis?            @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  conversationId   String?              @db.Uuid
+  conversation     Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  agentType        AgentType
+  model            String               @db.VarChar(100)
+  status           AgentExecutionStatus @default(PENDING)
+  input            Json?
+  output           Json?
+  totalTokens      Int?
+  promptTokens     Int?
+  completionTokens Int?
+  executionTimeMs  Int?
+  startedAt        DateTime?
+  completedAt      DateTime?
+  errorMessage     String?
+  createdAt        DateTime             @default(now())
+
+  @@index([analysisId])
+  @@index([conversationId])
+  @@index([status])
+  @@index([agentType])
+}
