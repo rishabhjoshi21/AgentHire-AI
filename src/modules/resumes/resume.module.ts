@@ -9,5 +9,6 @@ import { AuthModule } from '../auth/auth.module';
   controllers: [ResumeController],
 
   providers: [ResumeService, ResumeRepository, ResumeParser],
+  exports: [ResumeService, ResumeRepository],
 })
 export class ResumeModule {}

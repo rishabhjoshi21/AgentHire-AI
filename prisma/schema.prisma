@@ -100,21 +100,20 @@ model JobDescription {
 }
 
 model Analysis {
-  id               String           @id @default(uuid()) @db.Uuid
-  resumeId         String           @db.Uuid
-  resume           Resume           @relation(fields: [resumeId], references: [id], onDelete: Cascade)
-  jobDescriptionId String           @db.Uuid
-  jobDescription   JobDescription   @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
-  matchScore       Int?
-  atsScore         Int?
-  analysisResult   Json?
-  status           AnalysisStatus   @default(PENDING)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  executions       AgentExecution[]
-
-  @@index([resumeId])
-  @@index([jobDescriptionId])
+  id                 String           @id @default(uuid()) @db.Uuid
+  resumeId           String           @db.Uuid
+  resume             Resume           @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescriptionId   String           @db.Uuid
+  jobDescription     JobDescription   @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+  resumeMatchScore   Int?
+  atsScore           Int?
+  analysisResult     Json?
+  aiModel            String?          @db.VarChar(100)
+  status             AnalysisStatus   @default(PENDING)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  executions         AgentExecution[]
+  @@unique([resumeId, jobDescriptionId])
   @@index([status])
 }
 

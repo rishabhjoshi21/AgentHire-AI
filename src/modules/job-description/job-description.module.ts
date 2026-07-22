@@ -12,5 +12,6 @@ import { JobDescriptionRepository } from './job-description.repository';
   controllers: [JobDescriptionController],
 
   providers: [JobDescriptionService, JobDescriptionRepository],
+  exports: [JobDescriptionService, JobDescriptionRepository],
 })
 export class JobDescriptionModule {}

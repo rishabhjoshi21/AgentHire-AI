@@ -44,6 +44,7 @@ export class ResumeRepository {
       select: {
         id: true,
         title: true,
+        rawContent: true,
         optimizedContent: true,
         originalFileName: true,
         mimeType: true,

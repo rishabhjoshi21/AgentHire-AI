@@ -10,6 +10,7 @@ import {
 } from './shared/config';
 import { ResumeModule } from './modules/resumes/resume.module';
 import { JobDescriptionModule } from './modules/job-description/job-description.module';
+import { AnalysisModule } from './modules/analysis/analysis.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { JobDescriptionModule } from './modules/job-description/job-description.
     AuthModule,
     ResumeModule,
     JobDescriptionModule,
+    AnalysisModule,
   ],
 })
 export class AppModule {}

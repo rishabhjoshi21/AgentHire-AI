@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 export interface CreateResumeInput {
   userId: string;
 
@@ -66,4 +67,39 @@ export interface ParsedResume {
   content: string;
 
   metadata: ResumeMetadata;
+}
+
+export class CreateResumeDto {
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Resume file (PDF or DOCX)',
+  })
+  file!: Express.Multer.File;
+}
+
+export class ResumeResponseDto {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  title!: string;
+
+  @ApiProperty()
+  originalFileName!: string;
+
+  @ApiProperty()
+  mimeType!: string;
+
+  @ApiProperty()
+  storagePath!: string;
+
+  @ApiProperty()
+  fileSize!: number;
+
+  @ApiProperty()
+  createdAt!: Date;
+
+  @ApiProperty()
+  updatedAt!: Date;
 }
