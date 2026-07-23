@@ -15,7 +15,7 @@ export class CreateAnalysisDto {
   resumeId!: string;
 
   @ApiProperty({
-    description: 'Job description ID',
+    description: 'Job Description ID',
     example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @IsUUID()
@@ -28,6 +28,7 @@ export class CreateAnalysisDto {
 
 export class AnalyzeResumeResultDto {
   @ApiProperty({
+    description: 'ATS compatibility score (0-100)',
     example: 86,
   })
   @IsInt()
@@ -36,6 +37,7 @@ export class AnalyzeResumeResultDto {
   atsScore!: number;
 
   @ApiProperty({
+    description: 'Overall resume match score (0-100)',
     example: 82,
   })
   @IsInt()
@@ -44,6 +46,7 @@ export class AnalyzeResumeResultDto {
   resumeMatchScore!: number;
 
   @ApiProperty({
+    description: 'Overall AI summary of the resume',
     example:
       'Strong backend profile with good Node.js experience. Missing cloud-native deployment experience.',
   })
@@ -51,6 +54,7 @@ export class AnalyzeResumeResultDto {
   summary!: string;
 
   @ApiProperty({
+    description: 'Skills successfully matched with the job description',
     example: ['Node.js', 'TypeScript', 'MongoDB'],
   })
   @IsArray()
@@ -58,6 +62,7 @@ export class AnalyzeResumeResultDto {
   matchedSkills!: string[];
 
   @ApiProperty({
+    description: 'Required skills missing from the resume',
     example: ['Docker', 'Kubernetes'],
   })
   @IsArray()
@@ -65,13 +70,15 @@ export class AnalyzeResumeResultDto {
   missingSkills!: string[];
 
   @ApiProperty({
+    description: 'Important ATS keywords not found in the resume',
     example: ['Microservices', 'Redis'],
   })
   @IsArray()
   @IsString({ each: true })
-  keywordGaps!: string[];
+  missingKeywords!: string[];
 
   @ApiProperty({
+    description: 'AI suggestions to improve the resume',
     example: ['Add Docker experience.', 'Highlight scalable backend projects.'],
   })
   @IsArray()
@@ -102,7 +109,7 @@ export class AnalysisResponseDto {
   status!: AnalysisStatus;
 
   @ApiProperty({
-    example: 'gpt-4.1-mini',
+    example: 'gemini-flash-latest',
     nullable: true,
   })
   aiModel!: string | null;
@@ -116,14 +123,12 @@ export class AnalysisResponseDto {
   @ApiProperty({
     type: Date,
     example: '2023-08-01T12:34:56.789Z',
-    description: 'The date and time when the analysis was created',
   })
   createdAt!: Date;
 
   @ApiProperty({
     type: Date,
     example: '2023-08-01T12:34:56.789Z',
-    description: 'The date and time when the analysis was last updated',
   })
   updatedAt!: Date;
 }
@@ -141,12 +146,8 @@ export interface AnalyzeResumeRequest {
   jobDescriptionContent: string;
 }
 
-export interface AnalyzeResumeResponse {
-  atsScore: number;
-  resumeMatchScore: number;
-  summary: string;
-  matchedSkills: string[];
-  missingSkills: string[];
-  keywordGaps: string[];
-  recommendations: string[];
-}
+/**
+ * Alias to keep a single source of truth.
+ * The AI response should match AnalyzeResumeResultDto.
+ */
+export type AnalyzeResumeResponse = AnalyzeResumeResultDto;

@@ -124,4 +124,44 @@ export class AnalysisRepository {
       total,
     };
   }
+
+  async findForRetry(id: string, userId: string) {
+    return this.prisma.analysis.findFirst({
+      where: {
+        id,
+        resume: {
+          userId,
+        },
+      },
+      select: {
+        id: true,
+        status: true,
+        resume: {
+          select: {
+            rawContent: true,
+          },
+        },
+        jobDescription: {
+          select: {
+            rawContent: true,
+          },
+        },
+      },
+    });
+  }
+
+  async resetForRetry(id: string) {
+    return this.prisma.analysis.update({
+      where: {
+        id,
+      },
+      data: {
+        status: AnalysisStatus.PROCESSING,
+        atsScore: null,
+        resumeMatchScore: null,
+        analysisResult: Prisma.JsonNull,
+        aiModel: null,
+      },
+    });
+  }
 }

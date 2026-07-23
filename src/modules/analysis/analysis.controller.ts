@@ -89,4 +89,26 @@ export class AnalysisController {
   ) {
     return this.analysisService.findById(id, user.userId);
   }
+
+  @Post(':id/retry')
+  @ApiOperation({
+    summary: 'Retry failed analysis',
+    description: 'Retries a previously failed analysis.',
+  })
+  @ApiSuccess(AnalysisResponseDto)
+  @ApiBadRequestResponse({
+    description: 'Only failed analyses can be retried.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Authentication required.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Analysis not found.',
+  })
+  retry(
+    @CurrentUser() user: JwtPayload,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.analysisService.retry(id, user.userId);
+  }
 }

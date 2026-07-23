@@ -14,6 +14,7 @@ import { JobDescriptionRepository } from '@/modules/job-description/job-descript
 import { ResumeRepository } from '@/modules/resumes/resume.repository';
 
 import {
+  AnalysisResponseDto,
   AnalyzeResumeRequest,
   AnalyzeResumeResponse,
   AnalyzeResumeResultDto,
@@ -24,7 +25,7 @@ import {
   ANALYSIS_SYSTEM_PROMPT,
   buildAnalysisPrompt,
 } from './prompts/analysis.prompt';
-import { Prisma } from '@prisma/client';
+import { AnalysisStatus, Prisma } from '@prisma/client';
 import {
   buildPaginatedResponse,
   PaginationQueryDto,
@@ -103,6 +104,54 @@ export class AnalysisService {
     return analysis;
   }
 
+  async retry(id: string, userId: string): Promise<AnalysisResponseDto> {
+    const analysis = await this.analysisRepository.findForRetry(id, userId);
+
+    if (!analysis) {
+      throw new NotFoundException('Analysis not found.');
+    }
+
+    if (analysis.status !== AnalysisStatus.FAILED) {
+      throw new BadRequestException('Only failed analyses can be retried.');
+    }
+
+    await this.analysisRepository.resetForRetry(id);
+    if (!analysis.resume.rawContent) {
+      throw new BadRequestException(
+        'Resume content is not available for analysis.',
+      );
+    }
+
+    if (!analysis.jobDescription.rawContent) {
+      throw new BadRequestException(
+        'Job description content is not available for analysis.',
+      );
+    }
+
+    await this.analysisRepository.resetForRetry(id);
+
+    await this.processAnalysis(id, {
+      resumeContent: analysis.resume.rawContent,
+      jobDescriptionContent: analysis.jobDescription.rawContent,
+    });
+
+    await this.processAnalysis(id, {
+      resumeContent: analysis.resume.rawContent,
+      jobDescriptionContent: analysis.jobDescription.rawContent,
+    });
+
+    const updatedAnalysis = await this.analysisRepository.findById(id, userId);
+
+    if (!updatedAnalysis) {
+      throw new NotFoundException('Analysis not found.');
+    }
+
+    return {
+      ...updatedAnalysis,
+      analysisResult:
+        updatedAnalysis.analysisResult as AnalyzeResumeResultDto | null,
+    };
+  }
   private async processAnalysis(
     analysisId: string,
     request: AnalyzeResumeRequest,
@@ -168,9 +217,23 @@ export class AnalysisService {
       );
 
     if (existing) {
-      throw new ConflictException(
-        'Analysis already exists for this resume and job description.',
-      );
+      switch (existing.status) {
+        case AnalysisStatus.COMPLETED:
+          throw new ConflictException(
+            'Analysis already exists for this resume and job description.',
+          );
+
+        case AnalysisStatus.PROCESSING:
+          throw new ConflictException('Analysis is currently being processed.');
+
+        case AnalysisStatus.PENDING:
+          throw new ConflictException('Analysis is currently pending.');
+
+        case AnalysisStatus.FAILED:
+          throw new ConflictException(
+            `Analysis failed previously. Please retry the analysis.`,
+          );
+      }
     }
   }
 

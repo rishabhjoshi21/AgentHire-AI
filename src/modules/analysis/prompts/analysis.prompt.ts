@@ -13,7 +13,7 @@ Return only a valid JSON object with exactly this structure:
   "summary": "",
   "matchedSkills": [],
   "missingSkills": [],
-  "keywordGaps": [],
+  "missingKeywords": [],
   "recommendations": []
 }
 
@@ -24,7 +24,7 @@ Rules:
 - Do not invent candidate experience or skills.
 - matchedSkills must contain skills supported by the resume.
 - missingSkills must contain relevant job requirements not found in the resume.
-- keywordGaps must contain important ATS keywords missing from the resume.
+- missingKeywords must contain important ATS keywords missing from the resume.
 - recommendations must contain specific, actionable resume improvements.
 `;
 
