@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { GoogleGenAI } from '@google/genai';
 
 import { ChatOptions, LLMProvider } from '../llm.dto';
+import { parseLLMResponse } from '../llm-response-parser';
+import { handleLLMError } from '../llm-error-handler';
 
 @Injectable()
 export class GeminiProvider implements LLMProvider {
@@ -20,32 +22,25 @@ export class GeminiProvider implements LLMProvider {
 
   async chat<T>(options: ChatOptions): Promise<T> {
     const prompt = `
-System:
-${options.systemPrompt}
+        System:
+        ${options.systemPrompt}
 
-User:
-${options.userPrompt}
+        User:
+        ${options.userPrompt}
 
-Return ONLY valid JSON.
-`;
+        Return ONLY valid JSON.
+      `;
 
-    const response = await this.client.models.generateContent({
-      model: this.model,
-      contents: prompt,
-    });
+    try {
+      const response = await this.client.models.generateContent({
+        model: this.model,
+        contents: prompt,
+      });
 
-    const content = response.text || '';
-    const cleaned = content
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/\s*```$/, '')
-      .trim();
-
-    if (!content) {
-      throw new Error('LLM returned an empty response.');
+      return parseLLMResponse<T>(response.text ?? '');
+    } catch (error) {
+      handleLLMError('Gemini', error);
     }
-
-    return JSON.parse(cleaned) as T;
   }
 
   getModel(): string {

@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 
 import { ChatOptions, LLMProvider } from '../llm.dto';
+import { handleLLMError } from '../llm-error-handler';
+import { parseLLMResponse } from '../llm-response-parser';
 
 @Injectable()
 export class OpenAIProvider implements LLMProvider {
@@ -19,32 +21,33 @@ export class OpenAIProvider implements LLMProvider {
   }
 
   async chat<T>(options: ChatOptions): Promise<T> {
-    const response = await this.client.chat.completions.create({
-      model: this.model,
-      messages: [
-        {
-          role: 'system',
-          content: options.systemPrompt,
+    try {
+      const response = await this.client.chat.completions.create({
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content: options.systemPrompt,
+          },
+          {
+            role: 'user',
+            content: options.userPrompt,
+          },
+        ],
+        response_format: {
+          type: 'json_object',
         },
-        {
-          role: 'user',
-          content: options.userPrompt,
-        },
-      ],
-      response_format: {
-        type: 'json_object',
-      },
-    });
+      });
 
-    const content = response.choices[0]?.message.content;
+      const content = response.choices[0]?.message.content ?? '';
 
-    if (!content) {
-      throw new Error('LLM returned an empty response.');
+      return parseLLMResponse<T>(content);
+    } catch (error) {
+      handleLLMError('OpenAI', error);
     }
-
-    return JSON.parse(content) as T;
   }
+
   getModel(): string {
-    return this.configService.getOrThrow<string>('OPENAI_MODEL');
+    return this.model;
   }
 }
