@@ -135,11 +135,6 @@ export class AnalysisService {
       jobDescriptionContent: analysis.jobDescription.rawContent,
     });
 
-    await this.processAnalysis(id, {
-      resumeContent: analysis.resume.rawContent,
-      jobDescriptionContent: analysis.jobDescription.rawContent,
-    });
-
     const updatedAnalysis = await this.analysisRepository.findById(id, userId);
 
     if (!updatedAnalysis) {

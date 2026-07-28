@@ -1,22 +1,20 @@
-# AgentHire-Ai
+# AgentHire AI
 
-> **AgentHire** is an AI-powered Resume Intelligence Platform that helps job seekers optimize resumes, improve ATS compatibility, prepare for interviews, and build personalized learning roadmaps using Agentic AI, Retrieval-Augmented Generation (RAG), and Large Language Models (LLMs).
+> **AgentHire** is an AI-powered Career Intelligence Platform that helps job seekers analyze resumes, improve ATS compatibility, prepare for interviews, and build personalized learning roadmaps using Large Language Models (LLMs) and a modular AI service architecture.
 
 ---
 
 # Vision
 
-Finding a job has become increasingly difficult due to Applicant Tracking Systems (ATS), keyword filtering, and highly competitive hiring processes. Many qualified candidates never reach an interview because they lack visibility into how their resumes are evaluated.
+Modern hiring is increasingly driven by Applicant Tracking Systems (ATS), keyword filtering, and highly competitive recruitment processes. Many qualified candidates never reach the interview stage because they lack visibility into how their resumes are evaluated.
 
-AgentHire aims to bridge this gap by combining AI, semantic search, and intelligent agents to provide actionable insights that improve a candidate's chances of getting hired.
+AgentHire bridges this gap by providing AI-powered career guidance through intelligent resume analysis, personalized interview preparation, and learning recommendations.
 
-Rather than acting as a simple chatbot, AgentHire is designed as a modular AI platform capable of orchestrating multiple specialized agents that collaborate to solve complex career-related tasks.
+Instead of relying on a monolithic AI workflow, AgentHire follows a modular architecture where every AI capability is implemented as an independent service. This makes the platform scalable, maintainable, and ready for future agentic orchestration through a Career Coach Agent.
 
 ---
 
-# Goals
-
-The primary objectives of AgentHire are:
+# Project Goals
 
 - Analyze resumes against job descriptions
 - Calculate ATS compatibility scores
@@ -24,332 +22,233 @@ The primary objectives of AgentHire are:
 - Recommend resume improvements
 - Generate role-specific interview questions
 - Create personalized learning roadmaps
-- Support multiple LLM providers through a provider-agnostic architecture
-- Demonstrate production-grade backend architecture using modern engineering practices
+- Support multiple LLM providers through a provider abstraction layer
+- Demonstrate production-grade backend architecture
+- Provide a foundation for a future AI-powered Career Coach Agent
 
 ---
 
 # Functional Requirements
 
-### User Management
-
-- User registration
-- User authentication
-- JWT authorization
-- Profile management
-
-### Resume Management
-
-- Upload multiple resumes
-- Resume versioning
-- Resume history
-
-### Job Description Management
-
-- Save and organize job descriptions
-- Associate resumes with job descriptions
-
-### Resume Intelligence
-
-- Resume parsing
-- ATS score generation
-- Keyword extraction
-- Skill gap analysis
-- Resume improvement recommendations
-
-### AI Features
-
-- Resume Analysis Agent
-- Interview Question Generator
-- Learning Roadmap Generator
-- ATS Optimization Agent
-- Multi-provider LLM support
-- Retrieval-Augmented Generation (RAG)
+| ID    | Requirement                        | Status         |
+| ----- | ---------------------------------- | -------------- |
+| FR-01 | User Registration & Authentication | ✅ Completed   |
+| FR-02 | Upload & Manage Resumes            | ✅ Completed   |
+| FR-03 | Upload & Manage Job Descriptions   | ✅ Completed   |
+| FR-04 | AI Resume Analysis                 | ✅ Completed   |
+| FR-05 | ATS Compatibility Analysis         | ✅ Completed   |
+| FR-06 | Resume Review & Improvement        | 🚧 In Progress |
+| FR-07 | Interview Question Generation      | 🚧 In Progress |
+| FR-08 | Personalized Learning Roadmap      | 🚧 In Progress |
+| FR-09 | Career Coach Agent                 | 📅 Planned     |
 
 ---
 
 # Non-Functional Requirements
 
-### Scalability
+## Scalability
 
-- Modular architecture
-- Independent AI providers
-- Easily extensible agent framework
+- Modular feature-based architecture
+- Stateless REST APIs
+- Independent AI provider layer
 
-### Maintainability
+## Maintainability
 
 - SOLID Principles
-- Clean Architecture
 - Dependency Injection
+- Reusable AI services
 - Provider abstraction
 
-### Reliability
+## Reliability
 
 - Structured exception handling
-- LLM retry mechanism
-- Graceful provider switching
-- Consistent response formatting
+- Retry mechanism for LLM requests
+- Consistent JSON responses
 
-### Performance
+## Performance
 
 - Redis caching
-- Efficient prompt execution
-- Background task processing
-- Optimized database access
+- Optimized database queries
+- Asynchronous processing support
 
-### Security
+## Security
 
 - JWT Authentication
 - Password hashing
-- Input validation
-- Environment-based configuration
+- DTO validation
 - Secure API key management
 
 ---
 
 # Technology Stack
 
-## Backend
+| Layer               | Technology     |
+| ------------------- | -------------- |
+| Backend             | NestJS         |
+| Language            | TypeScript     |
+| Database            | PostgreSQL     |
+| ORM                 | Prisma         |
+| AI                  | Google Gemini  |
+| Future AI Providers | OpenAI, Claude |
+| Cache               | Redis          |
+| Authentication      | JWT, Passport  |
+| Containerization    | Docker         |
+| API Documentation   | Swagger        |
 
-- NestJS
-- TypeScript
+---
 
-## Database
+# Getting Started
 
+## Prerequisites
+
+- Node.js 22+
 - PostgreSQL
-- Prisma ORM
-
-## AI
-
-- Google Gemini
-- OpenAI
-- Agentic AI
-- Retrieval-Augmented Generation (Planned)
-- Embeddings (Planned)
-
-## Infrastructure
-
 - Redis
-- Docker (Planned)
-- GitHub Actions (Planned)
 
-## Authentication
-
-- JWT
-- Passport
-
----
-
-# System Architecture
-
-```text
-                                   +----------------------+
-                                   |   Web / Mobile App   |
-                                   +----------+-----------+
-                                              |
-                                        REST API
-                                              |
-                                              ▼
-+--------------------------------------------------------------------------------------+
-|                                  NestJS Backend                                      |
-|--------------------------------------------------------------------------------------|
-|                                                                                      |
-|  Authentication Module                                                                |
-|  User Module                                                                          |
-|  Resume Module                                                                        |
-|  Job Description Module                                                               |
-|  Analysis Module                                                                      |
-|                                                                                      |
-+----------------------------------------+---------------------------------------------+
-                                         |
-                                         ▼
-                                Agent Orchestrator
-                                         |
-              +--------------------------+--------------------------+
-              |                          |                          |
-              ▼                          ▼                          ▼
-     Resume Analysis Agent      Interview Agent         Learning Agent
-              |                          |                          |
-              +--------------------------+--------------------------+
-                                         |
-                                  Tool Registry Layer
-                                         |
-       +----------------------+----------------------+----------------------+
-       |                      |                      |                      |
-       ▼                      ▼                      ▼                      ▼
- Resume Parser         ATS Scoring Tool     Keyword Extractor         RAG Service
-                                                                        |
-                                           +----------------------------+-------------------------+
-                                           |                                                      |
-                                           ▼                                                      ▼
-                                   Embedding Service                                     Vector Database
-                                           |                                                      |
-                                           +----------------------------+-------------------------+
-                                                                        |
-                                                                        ▼
-                                                                Context Builder
-                                                                        |
-                                                                        ▼
-                                                                   LLM Service
-                                                                        |
-                                                             LLM Provider Interface
-                                                                        |
-                             +----------------------------+--------------+----------------------+
-                             |                            |                                     |
-                             ▼                            ▼                                     ▼
-                    Gemini Provider             OpenAI Provider                    Claude Provider
-                                                                                     (Future)
-                                                            |
-                                                            ▼
-                                                Structured AI Response
-                                                            |
-                                                            ▼
-                                                     Analysis Module
-                                                            |
-                                                            ▼
-                                                       REST Response
-```
-
----
-
-# AI Processing Flow
-
-```text
-User Request
-      │
-      ▼
-Analysis Module
-      │
-      ▼
-Agent Orchestrator
-      │
-      ▼
-Selected AI Agent
-      │
-      ▼
-Tool Registry
-      │
-      ├────────► Resume Parser
-      ├────────► ATS Scoring
-      ├────────► Keyword Extraction
-      └────────► RAG Retrieval
-                       │
-                       ▼
-               Context Builder
-                       │
-                       ▼
-                 LLM Service
-                       │
-                       ▼
-             Structured AI Output
-                       │
-                       ▼
-                 REST Response
-```
-
----
-
-# LLM Provider Architecture
-
-```text
-                Analysis Module
-                       │
-                       ▼
-                  LLM Service
-                       │
-                       ▼
-               LLMProvider Interface
-                       │
-          +------------+------------+
-          |                         |
-          ▼                         ▼
-  Gemini Provider          OpenAI Provider
-          │                         │
-          └------------+------------┘
-                       │
-                Runtime Selection
-                 (.env Configuration)
-```
-
----
-
-# Development Progress
-
-### Completed
-
-- Project foundation
-- Authentication module
-- Resume management
-- Job description management
-- Provider-agnostic LLM architecture
-- Gemini integration
-- OpenAI integration
-
-### Currently In Progress
-
-- Resume Analysis Engine
-- Prompt engineering
-- Structured AI response generation
-
-### Planned
-
-#### AI Layer
-
-- Retrieval-Augmented Generation (RAG)
-- Embedding generation
-- Vector database integration
-- Multi-agent orchestration
-- Tool execution framework
-
-#### Infrastructure
-
-- Docker
-- CI/CD
-- Monitoring
-- Logging
-- Background queues
-
-#### Future Integrations
-
-- MCP Server
-- External Tool Calling
-- Gmail
-- GitHub
-- Calendar
-- Notion
-
----
-
-# Running the Project
+## Installation
 
 ```bash
 git clone <repository-url>
-
 cd agenthire
-
 npm install
-
+cp .env.example .env
 npx prisma migrate dev
-
+npx prisma generate
 npm run start:dev
 ```
 
 ---
 
-# Future Scope
+# Unified System Architecture
 
-AgentHire is being designed as an extensible AI platform. Future releases will focus on:
+```text
+                                      User
+                                        │
+                                        ▼
+                                Web / Mobile Client
+                                        │
+                                  HTTPS / REST API
+                                        │
+                                        ▼
+                              NestJS REST Controllers
+                                        │
+      ┌─────────────────────────────────┼──────────────────────────────────┐
+      ▼                                 ▼                                  ▼
+ Authentication Module          Resume Module                Job Description Module
+                                        │
+                                        ▼
+                              Resume Analysis Service
+                                        │
+                           Stores Analysis Result
+                                        │
+        ┌───────────────────────────────┼───────────────────────────────┐
+        ▼                               ▼                               ▼
+ Resume Review Service      Interview Preparation Service      Learning Roadmap Service
+        │                               │                               │
+        └───────────────────────────────┼───────────────────────────────┘
+                                        ▼
+                               LLM Provider Layer
+                                        │
+                      ┌─────────────────┼─────────────────┐
+                      ▼                 ▼                 ▼
+                  Gemini             OpenAI             Claude
+                 (Current)          (Future)          (Future)
+                                        │
+                                        ▼
+                             Structured JSON Response
+                                        │
+                                        ▼
+                                  PostgreSQL
+                                        │
+                                        ▼
+                                  REST Response
 
-- Multi-agent collaboration
-- Autonomous workflow execution
-- External tool integrations through MCP
-- Company-specific knowledge bases
-- Conversation memory
-- AI-assisted career coaching
-- Enterprise hiring workflows
+──────────────────────────────────────────────────────────────────────────────
+
+                          Future Capability
+
+                         Career Coach Agent
+                                  │
+                  Understand User Goal & Context
+                                  │
+                 Decide Which Services To Execute
+                                  │
+ Resume Review • Interview Preparation • Learning Roadmap
+```
+
+---
+
+# Current Project Status
+
+## ✅ Completed
+
+- Authentication Module
+- User Management
+- Resume Management
+- Job Description Management
+- Resume Analysis
+- ATS Compatibility Analysis
+- Gemini Integration
+- Provider Abstraction Layer
+
+## 🚧 In Progress
+
+- Resume Review Service
+- Interview Preparation Service
+- Learning Roadmap Service
+- Prompt Engineering
+- Docker Configuration
+- Swagger Documentation
+
+## 📅 Planned
+
+### AI Features
+
+- Career Coach Agent
+- Multi-LLM Runtime Selection
+- AI Response Caching
+- Conversation History
+
+### Infrastructure
+
+- CI/CD Pipeline
+- Monitoring
+- Logging
+- Background Job Processing
+
+### Platform Features
+
+- Career Dashboard
+- Resume Version Comparison
+- Learning Progress Tracking
+
+---
+
+# Future Roadmap
+
+## Version 1.0
+
+- Authentication
+- Resume Upload
+- Job Description Upload
+- Resume Analysis
+- Resume Review
+- Interview Preparation
+- Learning Roadmap
+
+## Version 2.0
+
+- Career Coach Agent
+- Multi-Provider LLM Routing
+- Personalized Career Dashboard
+
+## Version 3.0
+
+- Enterprise Features
+- Analytics Dashboard
 
 ---
 
 # License
 
-This project is developed for educational purposes, experimentation, and as a portfolio project to demonstrate modern backend engineering and AI application development.
+This project is developed as a portfolio project to demonstrate modern backend engineering, scalable software architecture, and AI-powered application development using NestJS, TypeScript, PostgreSQL, Redis, and Large Language Models.
