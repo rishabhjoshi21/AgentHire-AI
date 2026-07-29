@@ -164,4 +164,31 @@ export class AnalysisRepository {
       },
     });
   }
+
+  findForResumeReview(id: string, userId: string) {
+    return this.prisma.analysis.findFirst({
+      where: {
+        id,
+        resume: {
+          userId,
+        },
+      },
+      select: {
+        id: true,
+        analysisResult: true,
+        resume: {
+          select: {
+            id: true,
+            rawContent: true,
+          },
+        },
+        jobDescription: {
+          select: {
+            id: true,
+            rawContent: true,
+          },
+        },
+      },
+    });
+  }
 }

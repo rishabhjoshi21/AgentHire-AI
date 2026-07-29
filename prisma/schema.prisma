@@ -113,8 +113,25 @@ model Analysis {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   executions         AgentExecution[]
+  review             ResumeReview?
   @@unique([resumeId, jobDescriptionId])
   @@index([status])
+}
+
+model ResumeReview {
+  id               String         @id @default(uuid()) @db.Uuid
+
+  analysisId       String         @db.Uuid
+  analysis         Analysis       @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  reviewResult     Json?
+
+  aiModel          String?        @db.VarChar(100)
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([analysisId])
 }
 
 model Conversation {
