@@ -27,20 +27,34 @@ export class ResumeReviewRepository {
 
   findById(
     id: string,
+    userId: string,
     tx?: Prisma.TransactionClient,
   ): Promise<ResumeReviewEntity | null> {
     return this.getPrisma(tx).resumeReview.findUnique({
-      where: { id },
+      where: {
+        id,
+        analysis: {
+          resume: {
+            userId,
+          },
+        },
+      },
     });
   }
 
   findByAnalysisId(
     analysisId: string,
+    userId: string,
     tx?: Prisma.TransactionClient,
   ): Promise<ResumeReviewEntity | null> {
     return this.getPrisma(tx).resumeReview.findUnique({
       where: {
         analysisId,
+        analysis: {
+          resume: {
+            userId,
+          },
+        },
       },
     });
   }

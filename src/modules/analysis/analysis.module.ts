@@ -16,6 +16,6 @@ import { AuthModule } from '../auth/auth.module';
 
   providers: [AnalysisService, AnalysisRepository],
 
-  exports: [AnalysisService],
+  exports: [AnalysisService, AnalysisRepository],
 })
 export class AnalysisModule {}

@@ -169,6 +169,7 @@ export class AnalysisRepository {
     return this.prisma.analysis.findFirst({
       where: {
         id,
+        status: AnalysisStatus.COMPLETED,
         resume: {
           userId,
         },

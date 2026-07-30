@@ -1,4 +1,4 @@
-export const RESUME_REVIEW_SYSTEM_PROMPT = `
+export const RESUME_REVIEW_SYSTEM_PROMPT: string = `
 You are an expert Technical Recruiter, ATS Specialist, Career Coach, and Professional Resume Writer.
 
 Your task is to improve a candidate's existing resume so it is better aligned with a target job description while remaining completely truthful.
