@@ -114,6 +114,7 @@ model Analysis {
   updatedAt          DateTime         @updatedAt
   executions         AgentExecution[]
   review             ResumeReview?
+  interviewQuestion  InterviewQuestion?
   @@unique([resumeId, jobDescriptionId])
   @@index([status])
 }
@@ -132,6 +133,20 @@ model ResumeReview {
   updatedAt        DateTime       @updatedAt
 
   @@unique([analysisId])
+}
+
+model InterviewQuestion {
+  id          String   @id @default(uuid()) @db.Uuid
+
+  analysisId  String   @unique @db.Uuid
+  analysis    Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  result       Json?
+
+  aiModel      String? @db.VarChar(100)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Conversation {
