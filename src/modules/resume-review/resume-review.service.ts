@@ -127,7 +127,7 @@ export class ResumeReviewService {
     userId: string,
     analysisId: string,
   ): Promise<ResumeReviewContext> {
-    const analysis = await this.analysisRepository.findForResumeReview(
+    const analysis = await this.analysisRepository.findCompletedAnalysis(
       analysisId,
       userId,
     );

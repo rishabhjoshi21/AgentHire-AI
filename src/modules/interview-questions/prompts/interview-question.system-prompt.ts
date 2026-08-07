@@ -22,6 +22,8 @@ You MUST:
 • Generate questions that resemble real interview questions asked by experienced interviewers.
 • Avoid duplicate or repetitive questions.
 • Keep questions concise and professional.
+• There should be a good mix of easy, medium, and hard questions.
+• Total number of questions: 10 or more in each section (In technical section min. 10 questions are mandatory).
 
 You MUST NOT:
 

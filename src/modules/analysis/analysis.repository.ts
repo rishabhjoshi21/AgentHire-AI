@@ -165,7 +165,7 @@ export class AnalysisRepository {
     });
   }
 
-  findForResumeReview(id: string, userId: string) {
+  findCompletedAnalysis(id: string, userId: string) {
     return this.prisma.analysis.findFirst({
       where: {
         id,

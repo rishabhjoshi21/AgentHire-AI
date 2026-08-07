@@ -12,6 +12,7 @@ import { ResumeModule } from './modules/resumes/resume.module';
 import { JobDescriptionModule } from './modules/job-description/job-description.module';
 import { AnalysisModule } from './modules/analysis/analysis.module';
 import { ResumeReviewModule } from './modules/resume-review/resume-review.module';
+import { InterviewQuestionModule } from './modules/interview-questions/interview-question.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ResumeReviewModule } from './modules/resume-review/resume-review.module
     JobDescriptionModule,
     AnalysisModule,
     ResumeReviewModule,
+    InterviewQuestionModule,
   ],
 })
 export class AppModule {}
