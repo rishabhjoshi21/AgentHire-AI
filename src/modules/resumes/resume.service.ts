@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { unlink } from 'fs/promises';
 
 import type { UploadedFile } from './resume.dto';
 
 import { ResumeRepository } from './resume.repository';
 import { ResumeParser } from './parsers/resume.parser';
-import { unlink } from 'fs/promises';
+
 import { generateFileHash } from '@/shared/utils/file-upload.util';
 
 @Injectable()
@@ -25,7 +26,6 @@ export class ResumeService {
 
       if (existingResume) {
         await unlink(file.path);
-
         return existingResume;
       }
 
@@ -33,9 +33,10 @@ export class ResumeService {
         file.path,
         file.mimetype,
       );
+
       const title = file.originalname.replace(/\.[^/.]+$/, '');
 
-      return this.resumeRepository.createResume({
+      const resume = await this.resumeRepository.createResume({
         userId,
         title,
         rawContent: JSON.stringify(parsedResume),
@@ -45,8 +46,11 @@ export class ResumeService {
         storagePath: file.path,
         fileSize: file.size,
       });
+
+      return resume;
     } catch (error) {
-      await unlink(file.path);
+      await this.cleanupUploadedFile(file.path);
+
       throw error;
     }
   }
@@ -78,5 +82,13 @@ export class ResumeService {
     return {
       deleted: true,
     };
+  }
+
+  private async cleanupUploadedFile(filePath: string): Promise<void> {
+    try {
+      await unlink(filePath);
+    } catch {
+      // Ignore cleanup errors so the original error is not replaced.
+    }
   }
 }

@@ -115,7 +115,7 @@ export class AnalysisService {
       throw new BadRequestException('Only failed analyses can be retried.');
     }
 
-    await this.analysisRepository.resetForRetry(id);
+    // Validate content BEFORE changing the analysis state
     if (!analysis.resume.rawContent) {
       throw new BadRequestException(
         'Resume content is not available for analysis.',
@@ -128,6 +128,7 @@ export class AnalysisService {
       );
     }
 
+    // Reset only after all validations pass
     await this.analysisRepository.resetForRetry(id);
 
     await this.processAnalysis(id, {
