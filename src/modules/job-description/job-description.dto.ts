@@ -41,8 +41,9 @@ export class CreateJobDescriptionDto {
   @RequireOne(['rawContent', 'jobUrl'], {
     message: 'Either job description content or job URL is required.',
   })
-  private readonly validateContent!: boolean;
+  private validateContent?: never;
 }
+
 export class UpdateJobDescriptionDto {
   @IsOptional()
   @IsString()
